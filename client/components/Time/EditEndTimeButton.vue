@@ -1,58 +1,59 @@
 
 <template>
-    <article
+  <article
     class="time"
+  >
+    <div
+      v-if="$store.state.username === time.creatorId"
+      class="actions"
     >
-   <div
-    v-if="$store.state.username === time.creatorId"
-    class="actions"
-    >
-        <button
+      <button
         v-if="editing"
         @click="submitEdit"
-        >
+      >
         ✅ Save changes
-        </button>
-        <button
+      </button>
+      <button
         v-if="editing"
         @click="stopEditing"
-        >
+      >
         🚫 Discard changes
-        </button>
-        <button
+      </button>
+      <button
         v-if="!editing"
         @click="startEditing"
-        >
-        ✏️ Edit Start Time
-        </button>
+      >
+        ✏️ Edit End Time
+      </button>
     </div>
-    <input type="time"
-    v-if="editing"
-    class="startTime"
-    :value="newStartTime"
-    @input="newStartTime = $event.target.value"
-    />
-    <p
-    v-else
-    class="startTime"
+    <input
+      v-if="editing"
+      type="time"
+      class="endTime"
+      :value="newEndTime"
+      @input="newEndTime = $event.target.value"
     >
-    {{ time.startTime }}
+    <p
+      v-else
+      class="endTime"
+    >
+      {{ time.endTime }}
     </p>
     <section class="alerts">
-    <article
+      <article
         v-for="(status, alert, index) in alerts"
         :key="index"
         :class="status"
-    >
+      >
         <p>{{ alert }}</p>
-    </article>
+      </article>
     </section>
-    </article>
+  </article>
 </template>
   
   <script>
   export default {
-    name: 'EditStartTimeButton',
+    name: 'EditEndTimeButton',
     props: {
       // Data from the stored time
       time: {
@@ -63,7 +64,7 @@
     data() {
       return {
         editing: false, 
-        newStartTime: this.time.startTime, 
+        newEndTime: this.time.endTime, 
         alerts: {} 
       };
     },
@@ -73,20 +74,20 @@
          * Enables edit mode on this time's start time.
          */
         this.editing = true; // Keeps track of if a freet is being edited
-        this.newStartTime = this.time.startTime; // The content of our current "draft" while being edited
+        this.newEndTime = this.time.endTime; // The content of our current "draft" while being edited
       },
       stopEditing() {
         /**
          * Disables edit mode on this time's start time.
          */
         this.editing = false;
-        this.newStartTime = this.time.startTime;
+        this.newEndTime = this.time.endTime;
       },
       submitEdit() {
         /**
          * Updates time to have the submitted start time.
          */
-        if (this.time.startTime === this.newStartTime) {
+        if (this.time.endTime === this.newStartTime) {
           const error = 'Error: Edited start time should be different than current start time.';
           this.$set(this.alerts, error, 'error'); // Set an alert to be the error text, timeout of 3000 ms
           setTimeout(() => this.$delete(this.alerts, error), 3000);
@@ -96,7 +97,7 @@
         const params = {
           method: 'PUT',
           message: 'Successfully edited start time!',
-          body: JSON.stringify({startTime: this.newStartTime}),
+          body: JSON.stringify({endTime: this.newEndTime}),
           callback: () => {
             this.$set(this.alerts, params.message, 'success');
             setTimeout(() => this.$delete(this.alerts, params.message), 3000);
@@ -119,7 +120,7 @@
         }
   
         try {
-          const r = await fetch(`/api/times/${this.time._id}/startTime`, options);
+          const r = await fetch(`/api/times/${this.time._id}/endTime`, options);
           if (!r.ok) {
             const res = await r.json();
             throw new Error(res.error);

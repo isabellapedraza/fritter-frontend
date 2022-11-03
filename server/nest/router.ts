@@ -154,6 +154,7 @@ router.post(
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
     const nest = await NestCollection.addOne(userId, req.body.name, [], []);
+    await TimeCollection.addOne(userId, nest._id, '00:00', '23:59'); // When you make a nest, you automatically create a time
     res.status(201).json({
       message: 'Your nest was created successfully.',
       nest: util.constructNestResponse(nest)

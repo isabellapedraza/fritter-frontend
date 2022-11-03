@@ -8,7 +8,6 @@
         <div class="right">
           <GetTimesForm
             ref="getTimesForm"
-            value="creator"
           />
         </div>
       </header>
@@ -27,29 +26,18 @@
         <h3>No times found.</h3>
       </article>
     </section>
-    <section v-else>
-      <header>
-        <h2>Welcome to Fritter!</h2>
-      </header>
-      <article>
-        <h3>
-          <router-link to="/login">
-            Sign in
-          </router-link>
-          to create, edit, and delete freets.
-        </h3>
-      </article>
-    </section>
   </main>
 </template>
 
 <script>
 import TimeComponent from '@/components/Time/TimeComponent.vue';
+import EditStartTimeButton from '../Time/EditStartTimeButton.vue';
+import EditEndTimeButton from '../Time/EditEndTimeButton.vue';
 import GetTimesForm from '@/components/Time/GetTimesForm.vue';
 
 export default {
   name: 'TimePage',
-  components: {TimeComponent, GetTimesForm}, 
+  components: {TimeComponent, GetTimesForm, EditStartTimeButton, EditEndTimeButton}, 
   mounted() {
     this.$refs.getTimesForm.submit();
   }

@@ -53,6 +53,18 @@ const store = new Vuex.Store({
        */
       state.times = times;
     },
+    async refreshTimes(state) {
+      /**
+       * Request the server for the currently available times.
+       */
+      if (state.username !== null){
+        const url = `/api/times?creator=${this.state.username}`;
+        const res = await fetch(url).then(async r => r.json());
+        state.times = res.times;
+      } else {
+        state.times = [];
+      }
+    },
     async refreshFreets(state) {
       /**
        * Request the server for the currently available freets.
@@ -60,14 +72,6 @@ const store = new Vuex.Store({
       const url = state.filter ? `/api/users/${state.filter}/freets` : '/api/freets';
       const res = await fetch(url).then(async r => r.json());
       state.freets = res;
-    },
-    async refreshTimes(state) {
-      /**
-       * Request the server for the currently available times.
-       */
-      const url = state.username ? `/api/times/${state.username}` : '/api/times';
-      const res = await fetch(url).then(async r => r.json());
-      state.times = res.times;
     }
   },
   // Store data across page refreshes, only discard on browser close
