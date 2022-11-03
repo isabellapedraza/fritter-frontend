@@ -42,3 +42,7 @@ const constructUserResponse = (user: HydratedDocument<User>): UserResponse => {
 export {
   constructUserResponse
 };
+
+export type {
+  UserResponse
+};

@@ -1,4 +1,5 @@
 import type {Request, Response, NextFunction} from 'express';
+import {Types} from 'mongoose';
 import UserCollection from '../user/collection';
 
 /**
@@ -144,6 +145,92 @@ const isAuthorExists = async (req: Request, res: Response, next: NextFunction) =
   next();
 };
 
+/**
+ * Checks if a user with userId as creator id in req.query exists
+ */
+const isCreatorExists = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.query.creator) {
+    res.status(400).json({
+      error: 'Provided creator username must be nonempty.'
+    });
+    return;
+  }
+
+  const user = await UserCollection.findOneByUsername(req.query.creator as string);
+  if (!user) {
+    res.status(404).json({
+      error: `A user with username ${req.query.creator as string} does not exist.`
+    });
+    return;
+  }
+
+  next();
+};
+
+/**
+ * Checks if a user with userId as creator id in req.query exists
+ */
+const isUserExists = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.query.user) {
+    res.status(400).json({
+      error: 'Provided user username must be nonempty.'
+    });
+    return;
+  }
+
+  const user = await UserCollection.findOneByUsername(req.query.user as string);
+  if (!user) {
+    res.status(404).json({
+      error: `A user with username ${req.query.user as string} does not exist.`
+    });
+    return;
+  }
+
+  next();
+};
+
+/**
+ * Checks if a user with memberId is req.body exists
+ */
+const isUserValid = async (req: Request, res: Response, next: NextFunction) => {
+  const validFormat = Types.ObjectId.isValid(req.body.memberId);
+  const user = validFormat ? await UserCollection.findOneByUserId(req.body.memberId) : '';
+  if (!user) {
+    res.status(404).json({
+      error: {
+        userNotFound: `User with user ID ${req.body.memberId as string} does not exist.`
+      }
+    });
+    return;
+  }
+
+  next();
+};
+
+/**
+ * Checks if a user with recipientId is req.body exists
+ */
+const isUserRecipientExists = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.body.recipient) {
+    res.status(400).json({
+      error: 'Provided recipient username must be nonempty.'
+    });
+    return;
+  }
+
+  const user = await UserCollection.findOneByUsername(req.body.recipient);
+  if (!user) {
+    res.status(404).json({
+      error: {
+        userNotFound: `User with user ID ${req.body.recipient as string} does not exist.`
+      }
+    });
+    return;
+  }
+
+  next();
+};
+
 export {
   isCurrentSessionUserExists,
   isUserLoggedIn,
@@ -151,6 +238,10 @@ export {
   isUsernameNotAlreadyInUse,
   isAccountExists,
   isAuthorExists,
+  isCreatorExists,
+  isUserExists,
   isValidUsername,
-  isValidPassword
+  isValidPassword,
+  isUserValid,
+  isUserRecipientExists
 };
