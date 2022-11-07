@@ -8,7 +8,7 @@ import * as userValidator from '../user/middleware';
 import * as nestValidator from '../nest/middleware';
 import * as freetValidator from '../freet/middleware';
 import * as util from './util';
-import { Types } from 'mongoose';
+import {Types} from 'mongoose';
 import {constructUserResponse} from '../user/util';
 import {constructFreetResponse} from '../freet/util';
 
@@ -82,9 +82,8 @@ router.get(
   async (req: Request, res: Response) => {
     const nest = await NestCollection.findOne(req.params.nestId);
     const response = [];
-    const {members} = nest;
-    for (const member of members) {
-      const user = await UserCollection.findOneByUserId(member)
+    for (const member of nest.members) {
+      const user = await UserCollection.findOneByUserId(member);
       response.push(constructUserResponse(user));
     }
 
