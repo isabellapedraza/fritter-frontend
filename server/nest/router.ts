@@ -8,7 +8,6 @@ import * as userValidator from '../user/middleware';
 import * as nestValidator from '../nest/middleware';
 import * as freetValidator from '../freet/middleware';
 import * as util from './util';
-import {Types} from 'mongoose';
 import {constructUserResponse} from '../user/util';
 import {constructFreetResponse} from '../freet/util';
 
@@ -241,12 +240,13 @@ router.put(
   '/:nestId?/members',
   [
     userValidator.isUserLoggedIn,
-    userValidator.isUserValid,
+    userValidator.isUserValid2,
     nestValidator.isNestExists,
     nestValidator.isValidNestModifier
   ],
   async (req: Request, res: Response) => {
-    const nest = await NestCollection.updateOne(req.params.nestId, req.body.memberId, undefined, req.body.operation);
+    const member = await UserCollection.findOneByUsername(req.body.memberId);
+    const nest = await NestCollection.updateOne(req.params.nestId, member._id, undefined, req.body.operation);
     res.status(200).json({
       message: 'Your nest was updated successfully.',
       nest: util.constructNestResponse(nest)

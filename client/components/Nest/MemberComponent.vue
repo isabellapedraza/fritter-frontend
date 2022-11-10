@@ -1,7 +1,7 @@
 <!-- Reusable component representing a single nest and its actions -->
 <!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
 
-<!-- <template>
+<template>
   <section>
     <div class="member">
       <h3 class="username">
@@ -24,6 +24,11 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      alerts: {} 
+    };
+  },
   methods: {
     removeMember() {
       /**
@@ -31,7 +36,7 @@ export default {
        */
       const params = {
         method: 'PUT',
-        body: JSON.stringify({memberId: this.user._id, operation: 'remove'}),
+        body: JSON.stringify({memberId: this.user.username, operation: 'remove'}),
         callback: () => {
           this.$store.commit('alert', {
             message: `Successfully removed ${this.user.username} from nest!`, status: 'success'
@@ -75,4 +80,4 @@ export default {
 
 <style scoped>
 
-</style> -->
+</style>

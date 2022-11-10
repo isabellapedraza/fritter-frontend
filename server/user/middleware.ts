@@ -208,6 +208,23 @@ const isUserValid = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 /**
+ * Checks if a user with memberId is req.body exists
+ */
+const isUserValid2 = async (req: Request, res: Response, next: NextFunction) => {
+  const user = await UserCollection.findOneByUsername(req.body.memberId);
+  if (!user) {
+    res.status(404).json({
+      error: {
+        userNotFound: `User with username ${req.body.memberId as string} does not exist.`
+      }
+    });
+    return;
+  }
+
+  next();
+};
+
+/**
  * Checks if a user with recipientId is req.body exists
  */
 const isUserRecipientExists = async (req: Request, res: Response, next: NextFunction) => {
@@ -243,5 +260,6 @@ export {
   isValidUsername,
   isValidPassword,
   isUserValid,
-  isUserRecipientExists
+  isUserRecipientExists,
+  isUserValid2
 };

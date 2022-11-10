@@ -3,22 +3,26 @@ import VueRouter from 'vue-router';
 import FreetsPage from './components/Freet/FreetsPage.vue';
 import TimesPage from './components/Time/TimesPage.vue';
 import NestsPage from './components/Nest/NestsPage.vue';
-//import NestMembersPage from './components/Nest/NestMembersPage.vue';
+import NestMembersPage from './components/Nest/NestMembersPage.vue';
 import AccountPage from './components/Account/AccountPage.vue';
 import LoginPage from './components/Login/LoginPage.vue';
 import ProfilePage from './components/Profile/ProfilePage.vue';
 import FriendsPage from './components/Friend/FriendsPage.vue';
+import MutualFriendsPage from './components/Friend/MutualFriendsPage.vue';
+import SuggestedFriendsPage from './components/Friend/SuggestedFriendsPage.vue';
 import NotFound from './NotFound.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
   {path: '/', name: 'Home', component: FreetsPage},
-  {path: '/profile', name: 'Profile', component: ProfilePage},
+  {path: '/profile/:username', name: 'Profile', component: ProfilePage},
   {path: '/friends', name: 'Friends', component: FriendsPage},
+  {path: '/mutual/:user', name: 'MutualFriends', component: MutualFriendsPage},
+  {path: '/suggested/:user', name: 'SuggestedFriends', component: SuggestedFriendsPage},
   {path: '/times', name: 'Times', component: TimesPage},
   {path: '/nests', name: 'Nests', component: NestsPage},
-  //{path: '/nests/:nestId', name: 'NestMembers', component: NestMembersPage},
+  {path: '/nests/:nestId', name: 'NestMembers', component: NestMembersPage},
   {path: '/account', name: 'Account', component: AccountPage},
   {path: '/login', name: 'Login', component: LoginPage},
   {path: '*', name: 'Not Found', component: NotFound}

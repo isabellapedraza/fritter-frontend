@@ -12,10 +12,11 @@ export default {
       method: 'POST',
       hasBody: true,
       fields: [
-        {id: 'content', label: 'Content', value: ''}
+        {id: 'content', label: 'express yourself', value: ''},
       ],
-      title: 'Create a freet',
+      title: 'chirp!',
       refreshFreets: true,
+      refreshNests: true,
       callback: () => {
         const message = 'Successfully created a freet!';
         this.$set(this.alerts, message, 'success');

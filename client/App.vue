@@ -29,8 +29,18 @@ export default {
 </script>
 
 <style>
+
 * {
   box-sizing: border-box;
+  font-family: Helvetica, sans-serif;
+}
+
+h1, h2, h3, h4 {
+  color: #22452c;
+}
+
+hr {
+  border-color: #e9f5db;
 }
 
 body {
@@ -44,6 +54,8 @@ body {
 
 main {
   padding: 0 5em 5em;
+  padding-left: 250px;
+  padding-top: 50px;
 }
 
 .alerts {

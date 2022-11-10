@@ -2,20 +2,22 @@
 
 <template>
   <main>
+    <h1>
+      feed
+    </h1>
+
+    <hr>
     <section v-if="$store.state.username">
-      <header>
-        <h2>Welcome @{{ $store.state.username }}</h2>
-      </header>
       <CreateFreetForm />
     </section>
     <section v-else>
       <header>
-        <h2>Welcome to Fritter!</h2>
+        <h2>welcome to fritter!</h2>
       </header>
       <article>
         <h3>
           <router-link to="/login">
-            Sign in
+            sign in
           </router-link>
           to create, edit, and delete freets.
         </h3>
@@ -25,7 +27,6 @@
       <header>
         <div class="left">
           <h2>
-            Viewing all freets
             <span v-if="$store.state.filter">
               by @{{ $store.state.filter }}
             </span>
@@ -52,7 +53,7 @@
       <article
         v-else
       >
-        <h3>No freets found.</h3>
+        <h3>no freets found.</h3>
       </article>
     </section>
   </main>
@@ -68,11 +69,16 @@ export default {
   components: {FreetComponent, GetFreetsForm, CreateFreetForm},
   mounted() {
     this.$refs.getFreetsForm.submit();
+    this.$store.commit("refreshNestPosts");
+    this.$store.commit("refreshNestMembers");
+    this.$store.commit("refreshNests");
+    this.$store.commit("refreshNestTimes");
   }
 };
 </script>
 
 <style scoped>
+
 section {
   display: flex;
   flex-direction: column;

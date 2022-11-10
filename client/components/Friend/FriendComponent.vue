@@ -8,8 +8,17 @@
         {{ user.username }}
       </h3>
     </div> 
-    <button @click="removeFriend">
-      ❌
+    <button 
+      v-if="$store.getters.areFriends(user.username)"
+      @click="removeFriend"
+    >
+      unfriend ❌
+    </button>
+    <button 
+      v-else
+      @click="addFriend"
+    >
+      friend ➕
     </button>
   </section>
 </template>
@@ -35,6 +44,21 @@ export default {
         callback: () => {
           this.$store.commit('alert', {
             message: `Successfully removed ${this.user.username} as a friend !`, status: 'success'
+          });
+        }
+      };
+      this.request(params);
+    },
+    addFriend() {
+      /**
+       * Deletes this friend.
+       */
+      const params = {
+        method: 'POST',
+        body: JSON.stringify({recipient: this.user.username}),
+        callback: () => {
+          this.$store.commit('alert', {
+            message: `Successfully added ${this.user.username} as a friend !`, status: 'success'
           });
         }
       };
@@ -74,5 +98,6 @@ export default {
 </script>
 
 <style scoped>
+
 
 </style>

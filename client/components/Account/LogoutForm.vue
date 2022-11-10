@@ -11,9 +11,9 @@ export default {
       url: '/api/users/session',
       method: 'DELETE',
       setUsername: true,
-      title: 'Sign out',
+      title: 'sign out',
       fields: [],
-      content: 'Taking a break? See you later.',
+      content: 'taking a break? See you later.',
       callback: () => {
         this.$router.push({name: 'Home'}); // Goes to Home page after signing out
         this.$store.commit('alert', {

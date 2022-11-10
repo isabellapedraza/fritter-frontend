@@ -24,6 +24,8 @@
         "nanoid": "^3.3.4",
         "vue": "^2.7.13",
         "vue-router": "^3.6.5",
+        "vue-select": "^3.20.0",
+        "vue2-timepicker": "^1.1.6",
         "vuex": "^3.6.2",
         "vuex-persistedstate": "^4.1.0"
     },
@@ -33,6 +35,7 @@
         "@types/express-session": "1.17.0",
         "@types/morgan": "^1.9.3",
         "@types/uuid": "^8.3.4",
+        "@types/vue-select": "^3.16.2",
         "@vue/cli-plugin-router": "^5.0.8",
         "@vue/cli-service": "^5.0.8",
         "eslint-config-xo": "^0.42.0",
@@ -54,7 +57,9 @@
                 "files": [
                     "**/*.ts"
                 ],
-                "excludedFiles": ["client/**"],
+                "excludedFiles": [
+                    "client/**"
+                ],
                 "extends": [
                     "xo",
                     "xo-typescript/space",

@@ -1,4 +1,3 @@
-import { STATES } from 'mongoose';
 import Vue from 'vue';
 import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
@@ -14,15 +13,158 @@ const store = new Vuex.Store({
     freets: [], // All freets created in the app
     users: null, 
     friends: null, // All the friends created in the app
+    mutual: null,
+    suggested: null,
     times: null, // All the times created in the app
     nests: null, // All the nests created in the app,
-    //members: null, // A certain nest's members
+    nestToMembers: null,
+    nestToPosts: null,
+    nestFilter: null,
+    nestToTimes: null,
     username: null, // Username of the logged in user
     alerts: {} // global success/error messages encountered during submissions to non-visible forms
   },
   getters: {
     userFreets: state => {
       return state.freets.filter(freet => freet.author === state.username);
+    },
+    isOnFeed: state => (freetAuthor) => {
+    /**
+     * Inspo from https://stackoverflow.com/a/59717615
+     */
+    const nestIds = [];
+    for (const [nestId, array] of state.nestToMembers){
+      for (const member of array){
+        if (member.username === freetAuthor){
+          if (!nestIds.includes(nestId)){
+            nestIds.push(nestId)
+          }
+        }
+      }
+    }
+
+    const nests = [];
+
+    for (const nest of state.nests){
+      for (const id of nestIds){
+        if (nest._id === id){
+          nests.push(nest.name);
+        } 
+      }
+    }
+
+    let isOnFeed = false;
+    const d = new Date();
+
+    for (const nest of nests){
+      const time = state.nestToTimes.get(nest);
+      const regExTime = /([0-9][0-9]):([0-9][0-9])/;
+      const regExTimeArrStart = regExTime.exec(time.startTime);
+      const regExTimeArrEnd = regExTime.exec(time.endTime);
+      if ((parseInt(regExTimeArrStart[1]) <= d.getHours() && parseInt(regExTimeArrStart[2]) <= d.getMinutes()) && (parseInt(regExTimeArrEnd[1]) >= d.getHours() && parseInt(regExTimeArrEnd[2]) >= d.getMinutes())){
+        isOnFeed = true;
+      }
+    }
+
+    return isOnFeed;
+
+    },
+    getNestOptions: state => {
+      const items = [];
+      for (const nest of state.nests){
+        items.push(nest.name);
+      }
+      return items;
+    },
+    getNestMembers: state => (nestId) => {
+      return state.nestToMembers.get(nestId);
+    },
+    areFriends: state => (userId) => {
+      let check = false;
+      for (const friend of state.friends){
+        if (friend.username === userId){
+          check = true;
+        }
+      }
+      return check;
+    }, 
+    inNest: state => (nestId, username) => {
+      let check = false;
+      for (const member of state.nestToMembers.get(nestId)){
+        if (member.username === username){
+          check = true;
+        }
+      }
+      return check;
+    }, 
+    getProfileNests: state => (username) => {
+      const nestIds = [];
+      for (const [nestId, array] of state.nestToMembers){
+        for (const user of array){
+          if (user.username === username){
+            if (!nestIds.includes(nestId)){
+              nestIds.push(nestId)
+            }
+          }
+        }
+      }
+
+      const nests = [];
+
+      for (const nest of state.nests){
+        for (const id of nestIds){
+          if (nest._id === id){
+            nests.push(nest);
+          } 
+        }
+      }
+      return nests;
+    },
+    getPostNests: state => (freetId) => {
+      const nestIds = [];
+      for (const [nestId, array] of state.nestToPosts){
+        for (const freet of array){
+          if (freet._id === freetId){
+            if (!nestIds.includes(nestId)){
+              nestIds.push(nestId)
+            }
+          }
+        }
+      }
+
+      const nests = [];
+
+      for (const nest of state.nests){
+        for (const id of nestIds){
+          if (nest._id === id){
+            nests.push(nest);
+          } 
+        }
+      }
+      return nests;
+    },
+    getPossiblePostNests: state => (freetId) => {
+      const nestIds = [];
+      for (const [nestId, array] of state.nestToPosts){
+        for (const freet of array){
+          if (freet._id !== freetId){
+            if (!nestIds.includes(nestId)){
+              nestIds.push(nestId)
+            }
+          }
+        }
+      }
+
+      const nests = [];
+
+      for (const nest of state.nests){
+        for (const id of nestIds){
+          if (nest._id === id){
+            nests.push(nest);
+          } 
+        }
+      }
+      return nests;
     }
   },
   mutations: {
@@ -55,13 +197,13 @@ const store = new Vuex.Store({
        */
       state.filter = filter;
     },
-    // updateNestMembers(state, nestMembers) {
-    //   /**
-    //    * Update the stored freets filter to the specified one.
-    //    * @param filter - Username of the user to fitler freets by
-    //    */
-    //   state.members = nestMembers;
-    // },
+    updateNestMembers(state, nestMembers) {
+      /**
+       * Update the stored freets filter to the specified one.
+       * @param filter - Username of the user to fitler freets by
+       */
+      state.members = nestMembers;
+    },
     updateFreets(state, freets) {
       /**
        * Update the stored freets to the provided freets.
@@ -94,13 +236,9 @@ const store = new Vuex.Store({
       /**
        * Request the server for the currently available times.
        */
-      if (state.username !== null){
-        const url = `/api/times?creator=${this.state.username}`;
-        const res = await fetch(url).then(async r => r.json());
-        state.times = res.times;
-      } else {
-        state.times = [];
-      }
+      const url = `/api/times?creator=${this.state.username}`;
+      const res = await fetch(url).then(async r => r.json());
+      state.times = res;
     },
     async refreshFreets(state) {
       /**
@@ -126,15 +264,72 @@ const store = new Vuex.Store({
       const res = await fetch(url).then(async r => r.json());
       state.friends = res;
     },
-    // async refreshNestMembers(state, nestId) {
-    //   /**
-    //    * Request the server for the currently available nests.
-    //    */
+    async refreshNestMembers(state) {
+      /**
+       * Request the server for the currently available nests.
+       */
+
+      const nestToMembers = new Map();
       
-    //   const url = `/api/nests/${nestId}/members`;
-    //   const res = await fetch(url).then(async r => r.json());
-    //   state.members = res;
-    // }
+       for (const nest of state.nests){
+        const url = `/api/nests/${nest._id}/members`;
+        const res = await fetch(url).then(async r => r.json());
+
+        nestToMembers.set(nest._id, res);
+       }
+
+      state.nestToMembers = nestToMembers;
+    },
+    async refreshNestPosts(state) {
+      /**
+       * Request the server for the currently available nests.
+       */
+
+      const nestToPosts = new Map();
+      
+       for (const nest of state.nests){
+        const url = `/api/nests/${nest._id}/posts`;
+        const res = await fetch(url).then(async r => r.json());
+
+        nestToPosts.set(nest._id, res);
+       }
+
+      state.nestToPosts = nestToPosts;
+    },
+    async refreshNestTimes(state) {
+      /**
+       * Request the server for the currently available nests.
+       */
+
+      const nestToTimes = new Map();
+      const url = `/api/times?creator=${this.state.username}`;
+      const res = await fetch(url).then(async r => r.json());
+      state.times = res;
+      
+      for (const time of state.times){
+        nestToTimes.set(time.groupId, time);
+      }
+
+      state.nestToTimes = nestToTimes;
+    },
+    async refreshMutual(state, user) {
+      /**
+       * Request the server for the currently available nests.
+       */
+      
+      const url = `/api/friends/mutual?user=${user}`;
+      const res = await fetch(url).then(async r => r.json());
+      state.mutual = res;
+    },
+    async refreshSuggested(state, user) {
+      /**
+       * Request the server for the currently available nests.
+       */
+      
+      const url = `/api/friends/suggested?user=${user}`;
+      const res = await fetch(url).then(async r => r.json());
+      state.suggested = res;
+    },
   },
   // Store data across page refreshes, only discard on browser close
   plugins: [createPersistedState()]

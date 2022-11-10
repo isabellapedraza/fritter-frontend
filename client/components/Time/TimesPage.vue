@@ -1,45 +1,35 @@
-<!-- Page that displays times -->
+<!-- Page that displays nests -->
+<!-- time picker : https://www.npmjs.com/package/vue2-timepicker -->
 
 <template>
   <main>
-    <section v-if="$store.state.username">
-      <header>
-        <h2>Welcome @{{ $store.state.username }}</h2>
-        <div class="right">
-          <GetTimesForm
-            ref="getTimesForm"
-          />
-        </div>
-      </header>
-      <section
-        v-if="$store.state.times.length"
-      >
-        <TimeComponent
-          v-for="time in $store.state.times"
-          :key="time.id"
-          :time="time"
-        />
-      </section>
-      <article
-        v-else
-      >
-        <h3>No times found.</h3>
-      </article>
+    <section>
+      <h1> nest times </h1>
     </section>
+
+    <hr>
+    
+    <section>
+      <TimeComponent
+        v-for="time in $store.state.times"
+        :key="time.id"
+        :time="time"
+      />
+    </section>
+    <hr>
+    <p>end of Times</p>
   </main>
 </template>
 
 <script>
+
 import TimeComponent from '@/components/Time/TimeComponent.vue';
-import EditStartTimeButton from '../Time/EditStartTimeButton.vue';
-import EditEndTimeButton from '../Time/EditEndTimeButton.vue';
-import GetTimesForm from '@/components/Time/GetTimesForm.vue';
 
 export default {
   name: 'TimePage',
-  components: {TimeComponent, GetTimesForm, EditStartTimeButton, EditEndTimeButton}, 
+  components: {TimeComponent},
   mounted() {
-    this.$refs.getTimesForm.submit();
+    this.$store.commit("refreshTimes");  //makes sure page always has most recent times
   }
 };
 </script>
@@ -56,10 +46,9 @@ header, header > * {
     align-items: center;
 }
 
-button {
-    margin-right: 10px;
+hr {
+  margin-top: 30px;
 }
-
 section .scrollbox {
   flex: 1 0 50vh;
   padding: 3%;

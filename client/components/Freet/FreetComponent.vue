@@ -5,68 +5,132 @@
   <article
     class="freet"
   >
-    <header>
-      <h3 class="author">
-        @{{ freet.author }}
-      </h3>
-      <div
-        v-if="$store.state.username === freet.author"
-        class="actions"
-      >
-        <button
-          v-if="editing"
-          @click="submitEdit"
-        >
-          ✅ Save changes
-        </button>
-        <button
-          v-if="editing"
-          @click="stopEditing"
-        >
-          🚫 Discard changes
-        </button>
-        <button
-          v-if="!editing"
-          @click="startEditing"
-        >
-          ✏️ Edit
-        </button>
-        <button @click="deleteFreet">
-          🗑️ Delete
-        </button>
-      </div>
-    </header>
-    <textarea
-      v-if="editing"
-      class="content"
-      :value="draft"
-      @input="draft = $event.target.value"
-    />
-    <p
-      v-else
-      class="content"
+    <section
+      v-if="freet.author === $store.state.username || $store.getters.isOnFeed(freet.author)"
     >
-      {{ freet.content }}
-    </p>
-    <p class="info">
-      Posted at {{ freet.dateModified }}
-      <i v-if="freet.edited">(edited)</i>
-    </p>
-    <section class="alerts">
-      <article
-        v-for="(status, alert, index) in alerts"
-        :key="index"
-        :class="status"
+      <header>
+        <router-link 
+          :to="{ name: 'Profile', params: { username: freet.author}}"
+        >
+          <h3 class="author">
+            @{{ freet.author }}
+          </h3>
+        </router-link>
+        <div
+          v-if="$store.state.username === freet.author"
+          class="actions"
+        >
+          <button
+            v-if="editing"
+            @click="submitEdit"
+          >
+            ✅ save changes
+          </button>
+          <button
+            v-if="editing"
+            @click="stopEditing"
+          >
+            🚫 discard changes
+          </button>
+          <button
+            v-if="!editing"
+            @click="startEditing"
+          >
+            ✏️ edit
+          </button>
+          <button @click="deleteFreet">
+            🗑️ delete
+          </button>
+        </div>
+      </header>
+      <textarea
+        v-if="editing"
+        class="content"
+        :value="draft"
+        @input="draft = $event.target.value"
+      />
+      <p
+        v-else
+        class="content"
       >
-        <p>{{ alert }}</p>
-      </article>
+        {{ freet.content }}
+      </p>
+      <p class="info">
+        posted at {{ freet.dateModified }}
+        <i v-if="freet.edited">(edited)</i>
+      </p>
+    
+      <section
+        v-if="freet.author !== $store.state.username"
+      >
+        <h4
+          v-if="$store.getters.getProfileNests(freet.author).length"
+        >
+          Nests:
+        </h4>
+        <QuickNestComponent
+          v-for="nest in $store.getters.getProfileNests(freet.author)"
+          :key="nest.id"
+          :nest="nest"
+        />
+      </section>
+
+      <section
+        v-else
+      >
+        <h4
+          v-if="$store.getters.getProfileNests(freet.author).length"
+        >
+          nests:
+        </h4>
+        <div
+          v-if="$store.getters.getPostNests(freet._id).length"
+        >
+          <QuickNestComponent
+            v-for="nest in $store.getters.getPostNests(freet._id)"
+            :key="nest.id"
+            :nest="nest"
+          />
+        </div>
+        <!-- <label> add to nest:</label>
+        <select
+          v-model="selected"
+        >
+          <option
+            v-for="option in $store.state.nests"
+            :key="option"
+            :value="option.name"
+          >
+            {{ option.name }}
+          </option>
+        </select> -->
+      </section>
+   
+      <section class="alerts">
+        <article
+          v-for="(status, alert, index) in alerts"
+          :key="index"
+          :class="status"
+        >
+          <p>{{ alert }}</p>
+        </article>
+      </section>
+    </section>
+    <section
+      v-else
+    >
+      <p>this chirps's nest is asleep 🪺💤</p>
     </section>
   </article>
 </template>
 
 <script>
+
+import QuickNestComponent from '@/components/Nest/QuickNestComponent.vue';
+
 export default {
   name: 'FreetComponent',
+  components: {QuickNestComponent},
   props: {
     // Data from the stored freet
     freet: {
@@ -77,11 +141,41 @@ export default {
   data() {
     return {
       editing: false, // Whether or not this freet is in edit mode
+      selected: '',
       draft: this.freet.content, // Potentially-new content for this freet
       alerts: {} // Displays success/error messages encountered during freet modification
     };
   },
   methods: {
+    // addToNest(){
+    //   const options2 = {
+    //     method2: 'PUT',
+    //     headers: {'Content-Type': 'application/json'},
+    //     credentials: 'same-origin', // Sends express-session credentials with request
+    //     body: JSON.stringify({operation: 'add', freetId: this.freet._id}),
+    //     callback: () => {
+    //       this.$set(this.alerts, options2.message, 'success');
+    //       setTimeout(() => this.$delete(this.alerts, options2.message), 3000);
+    //     }
+    //   }
+    //   try {
+    //     const r2 = await fetch(`/api/nests/${this.selected._id}`, options2);
+    //     if (!r2.ok) {
+    //       const res = await r2.json();
+    //       throw new Error(res.error);
+    //     }
+
+    //     this.$store.commit("refreshNestPosts");
+    //     this.$store.commit("refreshNestMembers");
+    //     this.$store.commit("refreshFreets");
+
+    //     options2.callback();
+
+    //   } catch (e) {
+    //     this.$set(this.alerts, e, 'error');
+    //     setTimeout(() => this.$delete(this.alerts, e), 3000);
+    //   }
+    // },
     startEditing() {
       /**
        * Enables edit mode on this freet.
@@ -171,5 +265,9 @@ export default {
     border: 1px solid #111;
     padding: 20px;
     position: relative;
+}
+
+QuickNestComponent {
+  display: inline;
 }
 </style>

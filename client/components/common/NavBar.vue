@@ -5,44 +5,37 @@
 <template>
   <nav>
     <div class="left">
-      <img src="../../public/logo.svg">
       <h1 class="title">
-        Fritter
+        fritter
       </h1>
     </div>
     <div class="right">
       <router-link to="/">
-        Home
+        🌐 feed
       </router-link>
-      <router-link
+      <router-link 
         v-if="$store.state.username"
-        to="/account"
+        :to="{ name: 'Profile', params: { username: $store.state.username}}"
       >
-        Account
-      </router-link>
-      <router-link
-        v-if="$store.state.username"
-        to="/profile"
-      >
-        Profile
+        🐥 profile
       </router-link>
       <router-link
         v-if="$store.state.username"
         to="/nests"
       >
-        Nests
+        🪺 nests
       </router-link>
       <router-link
         v-if="$store.state.username"
         to="/times"
       >
-        Times
+        🕑 times
       </router-link>
       <router-link
         v-else
         to="/login"
       >
-        Login
+        login
       </router-link>
     </div>
     <section class="alerts">
@@ -60,33 +53,40 @@
 <style scoped>
 nav {
     padding: 1vw 2vw;
-    background-color: #ccc;
+    background-color: #CFDFC5;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    flex-direction: column;
+    z-index: 999;
 }
 
 .title {
-    font-size: 32px;
-    margin: 0 5px;
-}
-
-img {
-    height: 32px;
+  padding-top: 19px;
+  font-size: 38px;
+  margin: 0 5px;
+  color: #22452c;
 }
 
 .left {
+  padding-top: 40px;
 	display: flex;
+  grid-auto-flow: column;
 	align-items: center;
+  width: max-content;
 }
 
 .right {
-    font-size: 20px;
-    display: grid;
+    padding-top: 30px;
+    font-size: 28px;
+    display: flex;
     gap: 16px;
     grid-auto-flow: column;
     align-items: center;
+    flex-direction: column;
 }
 
 .right a {

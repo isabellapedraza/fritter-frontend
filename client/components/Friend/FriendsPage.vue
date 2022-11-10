@@ -3,7 +3,7 @@
 <template>
   <main>
     <section>
-      <h1> My Chirpers </h1>
+      <h1> my chirpers </h1>
     </section>
 
     <hr>
@@ -14,7 +14,7 @@
         :user="user"
       />
     </section>
-    <p>End of Chirpers</p>
+    <p>end of chirpers</p>
   </main>
 </template>
 

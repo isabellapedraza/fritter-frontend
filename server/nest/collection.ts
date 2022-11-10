@@ -74,7 +74,7 @@ class NestCollection {
    * @param {boolean} operation - Whether to add or remove
    * @return {Promise<HydratedDocument<Nest>>} - The newly updated nest
    */
-  static async updateOne(nestId: Types.ObjectId | string, memberId: string | undefined, freetId: string | undefined, operation: string): Promise<HydratedDocument<Nest>> {
+  static async updateOne(nestId: Types.ObjectId | string, memberId: Types.ObjectId | string | undefined, freetId: string | undefined, operation: string): Promise<HydratedDocument<Nest>> {
     const check = 'add';
     const add = check === operation.toLowerCase();
     const nest = await NestModel.findOne({_id: nestId});

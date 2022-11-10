@@ -54,7 +54,7 @@ router.get(
 /**
  * Get the mutual friends of a user
  *
- * @name GET /api/friends/mutual:user?
+ * @name GET /api/friends/mutual?userId=id
  *
  * @param {string} user - the user you want to see your mutual friends with
  * @return {Types.ObjectId[]} - The mutual friends

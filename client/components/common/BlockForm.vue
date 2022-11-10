@@ -57,7 +57,7 @@ export default {
      */
     return {
       url: '', // Url to submit form to
-      method: 'GET', // Form request method
+      method: 'GET', // Form request method,
       hasBody: false, // Whether or not form request has a body
       setUsername: false, // Whether or not stored username should be updated after form submission
       refreshFreets: false, // Whether or not stored freets should be updated after form submission
@@ -76,6 +76,7 @@ export default {
         headers: {'Content-Type': 'application/json'},
         credentials: 'same-origin' // Sends express-session credentials with request
       };
+
       if (this.hasBody) {
         options.body = JSON.stringify(Object.fromEntries(
           this.fields.map(field => {
@@ -88,6 +89,7 @@ export default {
 
       try {
         const r = await fetch(this.url, options);
+
         if (!r.ok) {
           // If response is not okay, we throw an error and enter the catch block
           const res = await r.json();
@@ -110,6 +112,10 @@ export default {
 
         if (this.callback) {
           this.callback();
+        }
+
+        if (this.nests) {
+          //
         }
       } catch (e) {
         this.$set(this.alerts, e, 'error');

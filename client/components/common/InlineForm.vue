@@ -36,7 +36,7 @@ export default {
     button: {
       type: String,
       default: 'Submit'
-    }
+    },
   },
   data() {
     return {value: '', alerts: {}};

@@ -15,7 +15,7 @@ export default {
       {id: 'name', label: 'nest name', value: ''}
       ],
       title: 'Create Nest',
-      refreshNest: true,
+      refreshNests: true,
       callback: () => {
         const message = 'Successfully created a new nest!';
         this.$set(this.alerts, message, 'success');

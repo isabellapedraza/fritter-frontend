@@ -11,7 +11,7 @@ export default {
       url: '/api/users',
       method: 'DELETE',
       setUsername: true,
-      title: 'Delete account',
+      title: 'delete account',
       fields: [],
       content: 'Deleting your account is permanent and irreversible. Proceed only if you understand these consequences.',
       callback: () => {

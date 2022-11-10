@@ -1,31 +1,38 @@
 <!-- Page that displays nests -->
 
-<!-- <template>
+<template>
   <main>
+    <AddToNestForm 
+      ref="addToNestForm"
+      value="username"
+      button="➕ add to nest"
+    />
     <section>
       <h1> Chirpers in Nest </h1>
-    </section> -->
+    </section>
 
-    <!-- <section>
+    <section>
       <MemberComponent
-        v-for="member in $store.members"
-        :key="member.id"
-        :member="member"
+        v-for="user in $store.getters.getNestMembers($route.params.nestId)"
+        :key="user.id"
+        :user="user"
       />
-    </section> -->
-    <!-- <p>End of Nest's Members</p>
-  </main>
-</template> -->
+    </section>
 
-<!-- <script>
+    <p>End of Nest's Members</p>
+  </main>
+</template>
+
+<script>
 
 import MemberComponent from '../Nest/MemberComponent.vue';
+import AddToNestForm from '../Nest/AddToNestForm.vue';
 
 export default {
   name: 'NestMembersPage',
-  components: {MemberComponent},
+  components: {MemberComponent, AddToNestForm},
   mounted() {
-    //this.$store.commit("refreshNestMembers", this.$route.params.nestId);  //makes sure page always has most recent nests
+    this.$store.commit("refreshNestMembers");  //makes sure page always has most recent nests
   }
 };
 </script>
@@ -51,4 +58,4 @@ section .scrollbox {
   padding: 3%;
   overflow-y: scroll;
 }
-</style> -->
+</style>
