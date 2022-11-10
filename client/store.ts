@@ -11,7 +11,6 @@ const store = new Vuex.Store({
   state: {
     filter: null, // Username to filter shown freets by (null = show all)
     freets: [], // All freets created in the app
-    users: null, 
     friends: null, // All the friends created in the app
     mutual: null,
     suggested: null,
@@ -265,10 +264,7 @@ const store = new Vuex.Store({
       state.friends = res;
     },
     async refreshNestMembers(state) {
-      /**
-       * Request the server for the currently available nests.
-       */
-
+    
       const nestToMembers = new Map();
       
        for (const nest of state.nests){
@@ -281,10 +277,7 @@ const store = new Vuex.Store({
       state.nestToMembers = nestToMembers;
     },
     async refreshNestPosts(state) {
-      /**
-       * Request the server for the currently available nests.
-       */
-
+    
       const nestToPosts = new Map();
       
        for (const nest of state.nests){
@@ -297,10 +290,7 @@ const store = new Vuex.Store({
       state.nestToPosts = nestToPosts;
     },
     async refreshNestTimes(state) {
-      /**
-       * Request the server for the currently available nests.
-       */
-
+    
       const nestToTimes = new Map();
       const url = `/api/times?creator=${this.state.username}`;
       const res = await fetch(url).then(async r => r.json());
@@ -313,19 +303,13 @@ const store = new Vuex.Store({
       state.nestToTimes = nestToTimes;
     },
     async refreshMutual(state, user) {
-      /**
-       * Request the server for the currently available nests.
-       */
-      
+    
       const url = `/api/friends/mutual?user=${user}`;
       const res = await fetch(url).then(async r => r.json());
       state.mutual = res;
     },
     async refreshSuggested(state, user) {
-      /**
-       * Request the server for the currently available nests.
-       */
-      
+    
       const url = `/api/friends/suggested?user=${user}`;
       const res = await fetch(url).then(async r => r.json());
       state.suggested = res;

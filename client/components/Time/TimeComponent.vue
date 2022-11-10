@@ -95,21 +95,21 @@ export default {
   methods: {
     startEditingEndTime() {
         /**
-         * Enables edit mode on this time's start time.
+         * Enables edit mode on this time's end time.
          */
         this.editingEndTime = true; // Keeps track of if a freet is being edited
         this.newEndTime = this.time.endTime; // The content of our current "draft" while being edited
       },
     stopEditingEndTime() {
       /**
-       * Disables edit mode on this time's start time.
+       * Disables edit mode on this time's end time.
        */
       this.editingEndTime = false;
       this.newEndTime = this.time.endTime;
     },
     submitEditEndTime() {
       /**
-       * Updates time to have the submitted start time.
+       * Updates time to have the submitted end time.
        */
       if (this.time.endTime === this.newEndTime) {
         const error = 'Error: Edited start time should be different than current start time.';
@@ -131,7 +131,7 @@ export default {
     },
     async requestEndTime(params) {
       /**
-       * Submits a request to the nest's endpoint
+       * Submits a request to the time's endpoint
        * @param params - Options for the request
        * @param params.body - Body for the request, if it exists
        * @param params.callback - Function to run if the the request succeeds
@@ -196,7 +196,7 @@ export default {
     },
     async requestStartTime(params) {
       /**
-       * Submits a request to the nest's endpoint
+       * Submits a request to the time's endpoint
        * @param params - Options for the request
        * @param params.body - Body for the request, if it exists
        * @param params.callback - Function to run if the the request succeeds

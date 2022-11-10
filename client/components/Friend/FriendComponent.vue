@@ -51,7 +51,7 @@ export default {
     },
     addFriend() {
       /**
-       * Deletes this friend.
+       * Adds this friend.
        */
       const params = {
         method: 'POST',
